@@ -4,7 +4,7 @@ WordPress / WooCommerce plugin. Shortcode `[smart_login_form]`: login + registra
 with email verification (code + link), bot protection, lockout, forgot-password,
 optional WooCommerce integration. Class prefix `SML_`. OOP, WordPress coding standards.
 
-Repo: `github.com/maxazarpixel/smart-login` (private). This repo is the plugin root
+Repo: `github.com/maziyarnikbakhsh/smart-login-fa` (private). This repo is the plugin root
 (no wrapper folder). It was split out of the `smart_login` monorepo with history kept.
 
 ## Language
