@@ -4,7 +4,7 @@ Tags: login, registration, email verification, security, woocommerce
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.38.1
+Stable tag: 1.39.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,13 @@ After changing any caching configuration, purge the cache and test in a private/
 4. Place `[smart_login_form]` on any page or post.
 
 == Changelog ==
+
+= 1.39.0 =
+* Added: Settings → General → "One-time code (OTP)". Visitors can sign in with a code sent by SMS (when the account has an Iranian mobile number and an SMS gateway is set up) or by email: as an option next to the password, as the only way in (no password on the form), or as a second step after the password.
+* Added: "Hide the password field when registering" (with code-only sign-in the account gets a long random password) and "Hide the email field when registering" (while no email is needed, for example mobile sign-in with SMS verification).
+* Added: signing in with a code also verifies a not-yet-verified account, since the code reached its own mobile or inbox.
+* Changed: asking for a code never reveals whether an account exists; codes are single-use, expire, are limited per number, per IP and by the existing lockout.
+* Fixed: registration could fail with "Cannot create a user with an empty login name" when the name has no Latin letters (for example Persian) on sites that filter usernames; the username is now always a usable one, from the name, else the email, else a generated one.
 
 = 1.38.1 =
 * Fixed: translations are now loaded on the `init` hook and the settings page is built after that, as WordPress 6.7+ requires, which removes early-textdomain notices.

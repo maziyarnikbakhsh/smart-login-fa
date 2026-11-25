@@ -59,6 +59,32 @@ class SML_Email {
 	}
 
 	/**
+	 * The one-time code for signing in (Settings → General → One-time code).
+	 *
+	 * @param WP_User $user
+	 * @param string  $code
+	 * @return bool
+	 */
+	public static function send_login_code( WP_User $user, $code ) {
+		$expiry_minutes = (int) SML_Settings::get( 'code_expiry_minutes', 10 );
+
+		$subject = self::substitute( __( 'Your sign-in code for {site_name}', 'smart-login' ), $user );
+		$body    = self::substitute(
+			__( "Hi {user},
+
+Use the code below to sign in. It expires in {expiry_minutes} minutes.
+
+{code}
+
+If you did not try to sign in, you can ignore this email.", 'smart-login' ),
+			$user,
+			array( 'expiry_minutes' => $expiry_minutes )
+		);
+
+		return self::send( $user->user_email, $subject, $body, array( 'code' => $code ) );
+	}
+
+	/**
 	 * @param WP_User $user
 	 * @return bool
 	 */

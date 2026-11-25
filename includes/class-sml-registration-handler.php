@@ -57,6 +57,17 @@ class SML_Registration_Handler {
 		$national_id   = isset( $_POST['national_id'] ) ? preg_replace( '/[^0-9]/', '', SML_Iran::to_latin_digits( wp_unslash( $_POST['national_id'] ) ) ) : '';
 		$password      = isset( $_POST['password'] ) ? SML_Iran::to_latin_digits( (string) wp_unslash( $_POST['password'] ) ) : '';
 
+		// Boxes the admin hid are ignored whatever the request carries. Without a
+		// password box the account gets a long random one; its owner signs in
+		// with codes.
+		if ( SML_Settings::register_email_hidden() ) {
+			$email = '';
+			unset( $_POST['email'] );
+		}
+		if ( SML_Settings::register_password_hidden() ) {
+			$password = wp_generate_password( 24, true, false );
+		}
+
 		// When verifying by mobile the email is optional: an empty one gets a
 		// placeholder below. One that is entered must still be a real address.
 		$mobile_mode = 'mobile' === SML_Verification::method();
@@ -451,14 +462,21 @@ class SML_Registration_Handler {
 	 * @return string
 	 */
 	protected static function generate_username( $first_name, $last_name, $email ) {
-		$base = sanitize_user( strtolower( $first_name . '.' . $last_name ), true );
+		// Strict mode keeps only a-z, 0-9 and a few symbols, so a name written in
+		// Persian (or any non-Latin script) leaves just the joining dot behind.
+		// Strip what is left over and fall back step by step.
+		$clean = function ( $value ) {
+			return trim( sanitize_user( strtolower( (string) $value ), true ), '._-' );
+		};
 
-		if ( '' === $base ) {
-			$base = sanitize_user( strtolower( substr( $email, 0, strpos( $email, '@' ) ) ), true );
+		$base = $clean( $first_name . '.' . $last_name );
+
+		if ( '' === $base && false !== strpos( $email, '@' ) ) {
+			$base = $clean( substr( $email, 0, strpos( $email, '@' ) ) );
 		}
 
 		if ( '' === $base ) {
-			$base = 'user';
+			$base = 'user' . wp_rand( 1000, 9999 );
 		}
 
 		$username = $base;

@@ -54,6 +54,7 @@ class SML_Loader {
 
 		SML_Registration_Handler::init();
 		SML_Login_Handler::init();
+		SML_Login_Otp::init();
 		SML_Password_Reset_Handler::init();
 		SML_Page_Guard::init();
 		SML_Shortcode::init();
@@ -168,6 +169,7 @@ class SML_Loader {
 		require_once SML_PLUGIN_DIR . 'includes/class-sml-lockout.php';
 		require_once SML_PLUGIN_DIR . 'includes/class-sml-rate-limit.php';
 		require_once SML_PLUGIN_DIR . 'includes/class-sml-login-handler.php';
+		require_once SML_PLUGIN_DIR . 'includes/class-sml-login-otp.php';
 		require_once SML_PLUGIN_DIR . 'includes/class-sml-registration-handler.php';
 		require_once SML_PLUGIN_DIR . 'includes/class-sml-password-reset-handler.php';
 		require_once SML_PLUGIN_DIR . 'includes/class-sml-page-guard.php';

@@ -55,6 +55,15 @@ class SML_Login_Handler {
 	public static function ajax_login() {
 		check_ajax_referer( self::NONCE_ACTION, 'nonce' );
 
+		// With sign-in by code only, a password is never accepted here.
+		if ( SML_Login_Otp::password_refused() ) {
+			wp_send_json_error( array( 'message' => __( 'Please sign in with the code we send you.', 'smart-login' ) ) );
+		}
+
+		// With a code as the second step, the password only proves the first half:
+		// no session is opened until the code is confirmed.
+		$defer = 'second' === SML_Login_Otp::mode();
+
 		$mobile_tab = isset( $_POST['login_mode'] ) && 'mobile' === sanitize_key( wp_unslash( $_POST['login_mode'] ) );
 
 		// The form only offers the chosen method; a request for the other one
@@ -141,14 +150,7 @@ class SML_Login_Handler {
 		if ( $no_account ) {
 			$user = new WP_Error( 'sml_no_account', 'No account matches this number and password.' );
 		} else {
-			$user = wp_signon(
-				array(
-					'user_login'    => $username,
-					'user_password' => $password,
-					'remember'      => true,
-				),
-				is_ssl()
-			);
+			$user = self::authenticate( $username, $password, $defer );
 		}
 
 		// Passwords are stored with ASCII digits (see registration and reset),
@@ -164,14 +166,7 @@ class SML_Login_Handler {
 			if ( ! $passthrough ) {
 				$latin_password = SML_Iran::to_latin_digits( $password );
 				if ( $latin_password !== $password ) {
-					$user = wp_signon(
-						array(
-							'user_login'    => $username,
-							'user_password' => $latin_password,
-							'remember'      => true,
-						),
-						is_ssl()
-					);
+					$user = self::authenticate( $username, $latin_password, $defer );
 
 					if ( is_wp_error( $user ) ) {
 						$passthrough = self::is_passthrough_error( $user );
@@ -209,6 +204,16 @@ class SML_Login_Handler {
 
 		$redirect_to = SML_Page_Guard::validate_redirect( isset( $_POST['redirect_to'] ) ? wp_unslash( $_POST['redirect_to'] ) : '' );
 		$notice      = '';
+
+		if ( $defer ) {
+			// Password accepted: now the code. No cookie has been set yet.
+			$started = SML_Login_Otp::start( $user, $mobile_tab || '' !== $e164 ? 'sms' : 'email', $lock_key, $redirect_to );
+			if ( is_wp_error( $started ) ) {
+				wp_send_json_error( array( 'message' => $started->get_error_message() ) );
+			}
+
+			wp_send_json_success( $started );
+		}
 
 		if ( 'none' !== SML_Verification::method() && ! SML_Verification::is_verified( $user->ID ) ) {
 			if ( SML_Verification::has_verification_record( $user->ID ) ) {
@@ -291,6 +296,31 @@ class SML_Login_Handler {
 				'message'  => __( 'Login successful.', 'smart-login' ),
 				'notice'   => $notice,
 			)
+		);
+	}
+
+	/**
+	 * Checks a username and password. Normally that is wp_signon(); when a code
+	 * is still to follow (`$defer`), the password is checked without opening a
+	 * session.
+	 *
+	 * @param string $username
+	 * @param string $password
+	 * @param bool   $defer
+	 * @return WP_User|WP_Error
+	 */
+	protected static function authenticate( $username, $password, $defer ) {
+		if ( $defer ) {
+			return wp_authenticate( $username, $password );
+		}
+
+		return wp_signon(
+			array(
+				'user_login'    => $username,
+				'user_password' => $password,
+				'remember'      => true,
+			),
+			is_ssl()
 		);
 	}
 

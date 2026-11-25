@@ -156,6 +156,44 @@ class SML_Admin_Page extends APX_Admin_Page {
 					),
 				),
 				array(
+					'heading' => __( 'One-time code (OTP)', 'smart-login' ),
+					'desc'    => __( 'Let visitors sign in with a code sent to their mobile (SMS) or email instead of — or on top of — a password. The code goes by SMS when the account has an Iranian mobile number and an SMS gateway is set up (Settings → SMS gateway), otherwise by email. Nothing tells a visitor whether an account exists. Administrators can always use wp-login.php.', 'smart-login' ),
+					'fields'  => array(
+						array(
+							'type'       => 'select',
+							'name'       => 'login_otp',
+							'label'      => __( 'Sign in with a code', 'smart-login' ),
+							'options'    => array(
+								'off'    => __( 'Off — password only', 'smart-login' ),
+								'choice' => __( 'Optional — a "Sign in with a code" button next to the password', 'smart-login' ),
+								'only'   => __( 'Code only — no password on the form', 'smart-login' ),
+								'second' => __( 'Password, then a code (two steps)', 'smart-login' ),
+							),
+							'dep_master' => 'loginotp',
+							'desc'       => __( 'With "Mobile number only" sign-in and no SMS gateway there is no way to deliver a code, so this stays off until a gateway is configured.', 'smart-login' ),
+						),
+						array(
+							'type'  => 'toggle',
+							'name'  => 'register_hide_password',
+							'label' => __( 'Hide the password field when registering', 'smart-login' ),
+							'desc'  => __( 'Only with "Code only". New accounts get a long random password that nobody needs; people sign in with codes.', 'smart-login' ),
+							'dep'   => 'loginotp',
+							'dep_value' => 'only',
+						),
+					),
+				),
+				array(
+					'heading' => __( 'Registration form', 'smart-login' ),
+					'fields'  => array(
+						array(
+							'type'  => 'toggle',
+							'name'  => 'register_hide_email',
+							'label' => __( 'Hide the email field when registering', 'smart-login' ),
+							'desc'  => __( 'Works while no email is needed: mobile-number sign-in with SMS verification. The account then gets an internal address that is never mailed. If email verification or email sign-in is on, the field stays.', 'smart-login' ),
+						),
+					),
+				),
+				array(
 					'heading' => __( 'Behaviour', 'smart-login' ),
 					'fields'  => array(
 						array(

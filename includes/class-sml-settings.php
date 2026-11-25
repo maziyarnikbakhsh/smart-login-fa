@@ -33,6 +33,9 @@ class SML_Settings {
 			'allowed_login_roles'      => '',
 			'convert_digits_sitewide'  => 1,
 			'login_identifier'         => 'both',
+			'login_otp'                => 'off',
+			'register_hide_email'      => 0,
+			'register_hide_password'   => 0,
 			'enable_iran_fields'       => 0,
 			'iran_national_id_required' => 1,
 
@@ -132,6 +135,27 @@ class SML_Settings {
 		$value = (string) self::get( 'login_identifier', 'both' );
 
 		return in_array( $value, array( 'email', 'mobile' ), true ) ? $value : 'both';
+	}
+
+	/**
+	 * The email box is left off the registration form when the admin chose to
+	 * hide it — possible only while no email is needed (see
+	 * SML_Verification::email_required()).
+	 *
+	 * @return bool
+	 */
+	public static function register_email_hidden() {
+		return (bool) self::get( 'register_hide_email' ) && ! SML_Verification::email_required();
+	}
+
+	/**
+	 * The password box is left off the registration form when sign-in is by
+	 * code only; the account gets a long random password it never needs.
+	 *
+	 * @return bool
+	 */
+	public static function register_password_hidden() {
+		return (bool) self::get( 'register_hide_password' ) && SML_Login_Otp::password_refused();
 	}
 
 	/** @return bool Whether an email address / username can be used to sign in. */

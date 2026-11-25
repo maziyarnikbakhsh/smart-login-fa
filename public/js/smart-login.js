@@ -201,12 +201,9 @@
 	 * boxes themselves carry no name — their combined value is kept in a
 	 * single hidden `code` field that actually submits with the form.
 	 */
-	function wireOtp( root ) {
-		var group = qs( '[data-sml-otp]', root );
-		if ( ! group ) { return; }
-
+	function wireOtpGroup( group ) {
 		var boxes  = qsa( '.sml-otp-box', group );
-		var hidden = qs( '[data-sml-otp-value]', root );
+		var hidden = qs( '[data-sml-otp-value]', group.closest( 'form' ) );
 
 		function sync() {
 			hidden.value = boxes.map( function ( b ) { return b.value; } ).join( '' );
@@ -241,9 +238,15 @@
 		} );
 	}
 
-	function resetOtp( root ) {
-		var boxes  = qsa( '.sml-otp-box', root );
-		var hidden = qs( '[data-sml-otp-value]', root );
+	// Every code box group on the page (verification, sign-in code) is wired alike.
+	function wireOtp( root ) {
+		qsa( '[data-sml-otp]', root ).forEach( wireOtpGroup );
+	}
+
+	function resetOtp( root, form ) {
+		var scope  = form || root;
+		var boxes  = qsa( '.sml-otp-box', scope );
+		var hidden = qs( '[data-sml-otp-value]', scope );
 		boxes.forEach( function ( b ) { b.value = ''; } );
 		if ( hidden ) { hidden.value = ''; }
 		if ( boxes[ 0 ] ) { boxes[ 0 ].focus(); }
@@ -270,8 +273,8 @@
 		return data;
 	}
 
-	function startResendCooldown( root, availableAtMs ) {
-		var btn = qs( '[data-sml-resend]', root );
+	function startResendCooldown( root, availableAtMs, btnSelector ) {
+		var btn = qs( btnSelector || '[data-sml-resend]', root );
 		if ( ! btn ) { return; }
 
 		clearInterval( resendTimer );
@@ -292,11 +295,23 @@
 		resendTimer = setInterval( tick, 1000 );
 	}
 
+	// The "enter your sign-in code" step: after asking for a code, or after a
+	// correct password when a code is required as well.
+	function enterLoginOtp( root, data ) {
+		var form = qs( '[data-sml-form="loginotp"]', root );
+		if ( ! form ) { return; }
+		qs( '[data-sml-lotp-ticket]', form ).value = data.ticket || '';
+		showPanel( root, 'loginotp' );
+		resetOtp( root, form );
+		startResendCooldown( root, data.resend_available, '[data-sml-lotp-resend]' );
+		showMessage( root, data.message || SmartLogin.i18n.codeSent, false );
+	}
+
 	function enterVerifyStep( root, userId, resendAvailableMs, opts ) {
 		opts = opts || {};
 		qs( '[data-sml-user-id]', root ).value = userId;
 		showPanel( root, 'verify' );
-		resetOtp( root );
+		resetOtp( root, qs( '[data-sml-form="verify"]', root ) );
 		startResendCooldown( root, resendAvailableMs );
 
 		// "Not now": shown only on the soft path (a pre-existing, unverified
@@ -490,8 +505,53 @@
 
 			var loginForm = qs( '[data-sml-form="login"]', root );
 			if ( loginForm ) {
+				// Ask for a sign-in code instead of using a password.
+				var requestLoginCode = function () {
+					if ( botGatePending( 'login' ) ) { return; }
+					showMessage( root, '' );
+
+					var codeBtn = qs( 'button[type="submit"]', loginForm );
+					codeBtn.disabled = true;
+					var codeBtnText = codeBtn.textContent;
+					codeBtn.textContent = SmartLogin.i18n.sending;
+
+					getBotToken( loginForm, 'login' )
+						.then( function ( token ) {
+							var tokenField = qs( '[data-sml-bot-token]', loginForm );
+							if ( tokenField ) { tokenField.value = token || ''; }
+							var data = formData( loginForm );
+							delete data.password;
+							return post( 'sml_login_otp_send', SmartLogin.loginNonce, data );
+						} )
+						.then( function ( res ) {
+							resetTurnstile( 'login' );
+							if ( res.success ) {
+								enterLoginOtp( root, res.data );
+							} else {
+								showMessage( root, res.data.message || SmartLogin.i18n.genericError, true );
+							}
+						} )
+						.catch( function () {
+							resetTurnstile( 'login' );
+							showMessage( root, SmartLogin.i18n.genericError, true );
+						} )
+						.finally( function () {
+							codeBtn.disabled = botGatePending( 'login' );
+							codeBtn.textContent = codeBtnText;
+						} );
+				};
+
+				var codeLink = qs( '[data-sml-login-code]', loginForm );
+				if ( codeLink ) {
+					codeLink.addEventListener( 'click', requestLoginCode );
+				}
+
 				loginForm.addEventListener( 'submit', function ( e ) {
 					e.preventDefault();
+					if ( 'only' === loginForm.getAttribute( 'data-sml-otp-mode' ) ) {
+						requestLoginCode();
+						return;
+					}
 					if ( botGatePending( 'login' ) ) { return; }
 					showMessage( root, '' );
 
@@ -507,6 +567,12 @@
 							return post( 'sml_login', SmartLogin.loginNonce, formData( loginForm ) );
 						} )
 						.then( function ( res ) {
+							if ( res.success && res.data && res.data.otp_required ) {
+								// Password accepted; a code is still needed.
+								resetTurnstile( 'login' );
+								enterLoginOtp( root, res.data );
+								return;
+							}
 							if ( res.success ) {
 								var redirect = function () {
 									window.location.href = res.data.redirect || window.location.href;
@@ -643,6 +709,70 @@
 							submitBtn.textContent = submitBtn.dataset.originalText;
 						} );
 				} );
+			}
+
+			var lotpForm = qs( '[data-sml-form="loginotp"]', root );
+			if ( lotpForm ) {
+				lotpForm.addEventListener( 'submit', function ( e ) {
+					e.preventDefault();
+					showMessage( root, '' );
+
+					var lotpBtn = qs( 'button[type="submit"]', lotpForm );
+					lotpBtn.disabled = true;
+					var lotpText = lotpBtn.textContent;
+					lotpBtn.textContent = SmartLogin.i18n.loggingIn;
+
+					post( 'sml_login_otp_verify', SmartLogin.loginNonce, formData( lotpForm ) )
+						.then( function ( res ) {
+							if ( res.success ) {
+								showMessage( root, res.data.message, false );
+								window.location.href = res.data.redirect || window.location.href;
+								return;
+							}
+							if ( res.data && res.data.expired ) {
+								showPanel( root, 'login' );
+							} else {
+								resetOtp( root, lotpForm );
+							}
+							showMessage( root, ( res.data && res.data.message ) || SmartLogin.i18n.genericError, true );
+						} )
+						.catch( function () {
+							showMessage( root, SmartLogin.i18n.genericError, true );
+						} )
+						.finally( function () {
+							lotpBtn.disabled = false;
+							lotpBtn.textContent = lotpText;
+						} );
+				} );
+
+				var lotpResend = qs( '[data-sml-lotp-resend]', lotpForm );
+				if ( lotpResend ) {
+					lotpResend.addEventListener( 'click', function () {
+						showMessage( root, '' );
+						lotpResend.disabled = true;
+
+						post( 'sml_login_otp_resend', SmartLogin.loginNonce, { ticket: qs( '[data-sml-lotp-ticket]', lotpForm ).value, redirect_to: ( qs( '[name="redirect_to"]', lotpForm ) || {} ).value || '' } )
+							.then( function ( res ) {
+								if ( res.success ) {
+									enterLoginOtp( root, res.data );
+								} else if ( res.data && res.data.expired ) {
+									showPanel( root, 'login' );
+									showMessage( root, res.data.message, true );
+								} else {
+									showMessage( root, ( res.data && res.data.message ) || SmartLogin.i18n.genericError, true );
+									if ( res.data && res.data.resend_available ) {
+										startResendCooldown( root, res.data.resend_available, '[data-sml-lotp-resend]' );
+									} else {
+										lotpResend.disabled = false;
+									}
+								}
+							} )
+							.catch( function () {
+								lotpResend.disabled = false;
+								showMessage( root, SmartLogin.i18n.genericError, true );
+							} );
+					} );
+				}
 			}
 
 			var forgotForm = qs( '[data-sml-form="forgot"]', root );
