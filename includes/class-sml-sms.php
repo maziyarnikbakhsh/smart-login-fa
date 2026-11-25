@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class SML_SMS {
 
-	const PHONE_LIMIT  = 3;
+	const PHONE_LIMIT  = 10;
 	const PHONE_WINDOW = HOUR_IN_SECONDS;
 
 	/** Gateways that can only deliver to Iranian (+98) numbers. */
@@ -348,7 +348,10 @@ class SML_SMS {
 	protected static function check_phone_budget( $e164 ) {
 		$count = (int) get_transient( self::phone_key( $e164 ) );
 
-		if ( $count >= self::PHONE_LIMIT ) {
+		$limit = (int) SML_Settings::get( 'sms_hourly_limit', self::PHONE_LIMIT );
+		$limit = $limit > 0 ? $limit : self::PHONE_LIMIT;
+
+		if ( $count >= $limit ) {
 			return new WP_Error( 'sml_sms_throttled', __( 'Too many codes have been requested for this number. Please try again later.', 'smart-login' ) );
 		}
 

@@ -55,6 +55,7 @@ class SML_Settings {
 			'sms_sender'               => '',
 			'sms_template'             => '',
 			'sms_code_variable'        => 'code',
+			'sms_hourly_limit'         => 10,
 			'sms_reset_template'       => '',
 			'sms_message'              => __( "Verification code\nCode: {code}\n{site}", 'smart-login' ),
 			'sms_reset_message'        => '',

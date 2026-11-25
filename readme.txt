@@ -4,7 +4,7 @@ Tags: login, registration, email verification, security, woocommerce
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.39.0
+Stable tag: 1.39.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,9 @@ After changing any caching configuration, purge the cache and test in a private/
 4. Place `[smart_login_form]` on any page or post.
 
 == Changelog ==
+
+= 1.39.1 =
+* Changed: the SMS budget per phone number is now 10 codes per hour (was 3) and can be changed in Settings → SMS gateway → "SMS codes per number per hour".
 
 = 1.39.0 =
 * Added: Settings → General → "One-time code (OTP)". Visitors can sign in with a code sent by SMS (when the account has an Iranian mobile number and an SMS gateway is set up) or by email: as an option next to the password, as the only way in (no password on the form), or as a second step after the password.

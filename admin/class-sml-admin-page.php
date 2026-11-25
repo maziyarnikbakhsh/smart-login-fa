@@ -482,6 +482,7 @@ class SML_Admin_Page extends APX_Admin_Page {
 				array( 'type' => 'text', 'name' => 'sms_template', 'label' => __( 'Template / pattern code', 'smart-login' ), 'desc' => __( 'Kavenegar: the verification template name. FarazSMS and IPPanel (legacy): the pattern code. Melipayamak: the bodyId of the approved template.', 'smart-login' ), 'dep' => 'smsprov', 'dep_value' => $patterns ),
 				array( 'type' => 'text', 'name' => 'sms_reset_template', 'label' => __( 'Password-reset template / pattern code', 'smart-login' ), 'desc' => __( 'Optional. A separate approved template for password-reset codes; leave empty to reuse the verification template above.', 'smart-login' ), 'dep' => 'smsprov', 'dep_value' => $patterns ),
 				array( 'type' => 'text', 'name' => 'sms_code_variable', 'label' => __( 'Code variable name', 'smart-login' ), 'desc' => __( 'FarazSMS and IPPanel (legacy): the variable in your pattern that receives the code, for example code.', 'smart-login' ), 'dep' => 'smsprov', 'dep_value' => 'farazsms,ippanel' ),
+				array( 'type' => 'number', 'name' => 'sms_hourly_limit', 'label' => __( 'SMS codes per number per hour', 'smart-login' ), 'min' => 1, 'max' => 100, 'desc' => __( 'The most codes (sign-up, sign-in and password reset together) one phone number can be sent per hour, whichever account or IP asks. Protects you from SMS abuse and cost.', 'smart-login' ), 'dep' => 'smsprov', 'dep_value' => $all ),
 				array( 'type' => 'html', 'html' => $this->test_sms_html() ),
 			),
 		);
