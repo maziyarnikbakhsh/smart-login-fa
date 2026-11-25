@@ -723,8 +723,8 @@ msgid "The line your messages are sent from. For the IPPanel web service use the
 msgstr "خطی که پیام‌ها از آن ارسال می‌شود. برای وب‌سرویس IPPanel قالب بین‌المللی را بنویسید، مثلاً +983000505."
 
 #: admin/class-sml-admin-page.php:479
-msgid "The text of the sign-up and login code message. Placeholders: {code} (or %code%), {site}, {site_name}, {expiry_minutes}. Plain text only; keep it short and leave out links. The code is a random number of the length set under Verification → Code length (6 by default). If the placeholder is missing the code is added at the end."
-msgstr "متن پیامک کد ثبت‌نام و ورود. جای‌نگهدارها: {code} (یا %code%)، {site}، {site_name}، {expiry_minutes}. فقط متن ساده؛ کوتاه بنویسید و لینک نگذارید. کد یک عدد تصادفی به طول تعیین‌شده در «تأیید ← طول کد» است (پیش‌فرض ۶). اگر جای‌نگهدار نباشد، کد در انتها اضافه می‌شود."
+msgid "The text of the sign-up and login code message. Placeholders: {code} (or %code%), {site}, {site_name}, {expiry_minutes}. Plain text only; keep it short and leave out links. The code is a random number of the length set under Verification → Code length (6 by default). If the placeholder is missing the code is added at the end. Not used when a pattern code is set below."
+msgstr "متن پیامک کد ثبت‌نام و ورود. جایگزین‌ها: {code} (یا %code%)، {site}، {site_name}، {expiry_minutes}. فقط متن ساده؛ کوتاه بنویسید و لینک نگذارید. کد عددی تصادفی است با طولی که در تأیید ← طول کد تعیین شده (پیش‌فرض ۶). اگر جایگزین نباشد کد به انتها اضافه می‌شود. وقتی پایین کد پترن وارد شده باشد استفاده نمی‌شود."
 
 #: admin/class-sml-admin-page.php:479
 msgid "Verification message text"
@@ -739,8 +739,8 @@ msgid "Password-reset message text"
 msgstr "متن پیامک بازیابی رمز عبور"
 
 #: admin/class-sml-admin-page.php:482
-msgid "Kavenegar: the verification template name. FarazSMS and IPPanel (legacy): the pattern code. Melipayamak: the bodyId of the approved template."
-msgstr "کاوه‌نگار: نام قالب تأیید. فراز اس‌ام‌اس و IPPanel (قدیمی): کد پترن. ملی پیامک: bodyId قالب تاییدشده."
+msgid "Kavenegar: the verification template name. IPPanel (web service), FarazSMS and IPPanel (legacy): the pattern code. Melipayamak: the bodyId of the approved template. With the IPPanel web service, a pattern code makes the code go out as a pattern message, which is delivered right away without review; leave it empty to send the message text below instead."
+msgstr "Kavenegar: نام قالب تأیید. IPPanel (وب‌سرویس)، FarazSMS و IPPanel (قدیمی): کد پترن. Melipayamak: bodyId قالب تأییدشده. در وب‌سرویس IPPanel با وارد کردن کد پترن، کد به‌صورت پیامک پترنی ارسال می‌شود که بدون بازبینی و بلافاصله تحویل داده می‌شود؛ برای ارسال متن پیام زیر، آن را خالی بگذارید."
 
 #: admin/class-sml-admin-page.php:482
 msgid "Template / pattern code"
@@ -759,8 +759,8 @@ msgid "Code variable name"
 msgstr "نام متغیر کد"
 
 #: admin/class-sml-admin-page.php:484
-msgid "FarazSMS and IPPanel (legacy): the variable in your pattern that receives the code, for example code."
-msgstr "فراز اس‌ام‌اس و IPPanel (قدیمی): متغیری در پترن شما که کد را می‌گیرد، مثلاً code."
+msgid "IPPanel (web service), FarazSMS and IPPanel (legacy): the variable in your pattern that receives the code, for example code."
+msgstr "IPPanel (وب‌سرویس)، FarazSMS و IPPanel (قدیمی): متغیری در پترن شما که کد را دریافت می‌کند، مثلاً code."
 
 #: admin/class-sml-admin-page.php:485
 msgid "SMS codes per number per hour"

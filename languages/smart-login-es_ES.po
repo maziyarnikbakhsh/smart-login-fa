@@ -723,8 +723,8 @@ msgid "The line your messages are sent from. For the IPPanel web service use the
 msgstr "La línea desde la que se envían tus mensajes. Para el servicio web de IPPanel usa la forma internacional, por ejemplo +983000505."
 
 #: admin/class-sml-admin-page.php:479
-msgid "The text of the sign-up and login code message. Placeholders: {code} (or %code%), {site}, {site_name}, {expiry_minutes}. Plain text only; keep it short and leave out links. The code is a random number of the length set under Verification → Code length (6 by default). If the placeholder is missing the code is added at the end."
-msgstr "El texto del mensaje con el código de registro e inicio de sesión. Marcadores: {code} (o %code%), {site}, {site_name}, {expiry_minutes}. Solo texto sin formato; que sea corto y sin enlaces. El código es un número aleatorio de la longitud definida en Verificación → Longitud del código (6 por defecto). Si falta el marcador, el código se añade al final."
+msgid "The text of the sign-up and login code message. Placeholders: {code} (or %code%), {site}, {site_name}, {expiry_minutes}. Plain text only; keep it short and leave out links. The code is a random number of the length set under Verification → Code length (6 by default). If the placeholder is missing the code is added at the end. Not used when a pattern code is set below."
+msgstr "El texto del mensaje con el código de registro e inicio de sesión. Marcadores: {code} (o %code%), {site}, {site_name}, {expiry_minutes}. Solo texto; hazlo breve y sin enlaces. El código es un número aleatorio con la longitud fijada en Verificación → Longitud del código (6 por defecto). Si falta el marcador, el código se añade al final. No se usa cuando se indica un código de patrón abajo."
 
 #: admin/class-sml-admin-page.php:479
 msgid "Verification message text"
@@ -739,8 +739,8 @@ msgid "Password-reset message text"
 msgstr "Texto del mensaje de restablecimiento de contraseña"
 
 #: admin/class-sml-admin-page.php:482
-msgid "Kavenegar: the verification template name. FarazSMS and IPPanel (legacy): the pattern code. Melipayamak: the bodyId of the approved template."
-msgstr "Kavenegar: el nombre de la plantilla de verificación. FarazSMS e IPPanel (antiguo): el código del patrón. Melipayamak: el bodyId de la plantilla aprobada."
+msgid "Kavenegar: the verification template name. IPPanel (web service), FarazSMS and IPPanel (legacy): the pattern code. Melipayamak: the bodyId of the approved template. With the IPPanel web service, a pattern code makes the code go out as a pattern message, which is delivered right away without review; leave it empty to send the message text below instead."
+msgstr "Kavenegar: el nombre de la plantilla de verificación. IPPanel (servicio web), FarazSMS e IPPanel (heredado): el código del patrón. Melipayamak: el bodyId de la plantilla aprobada. Con el servicio web de IPPanel, un código de patrón envía el código como mensaje de patrón, que se entrega de inmediato sin revisión; déjalo vacío para enviar el texto del mensaje de abajo."
 
 #: admin/class-sml-admin-page.php:482
 msgid "Template / pattern code"
@@ -759,8 +759,8 @@ msgid "Code variable name"
 msgstr "Nombre de la variable del código"
 
 #: admin/class-sml-admin-page.php:484
-msgid "FarazSMS and IPPanel (legacy): the variable in your pattern that receives the code, for example code."
-msgstr "FarazSMS e IPPanel (antiguo): la variable de tu patrón que recibe el código, por ejemplo code."
+msgid "IPPanel (web service), FarazSMS and IPPanel (legacy): the variable in your pattern that receives the code, for example code."
+msgstr "IPPanel (servicio web), FarazSMS e IPPanel (heredado): la variable de tu patrón que recibe el código, por ejemplo code."
 
 #: admin/class-sml-admin-page.php:485
 msgid "SMS codes per number per hour"

@@ -11,7 +11,7 @@
  *
  * Providers (request formats taken from each gateway's own documentation or
  * official SDK):
- *   ippanel_ws   POST edge.ippanel.com/v1/api/send                  (Authorization header, free text)
+ *   ippanel_ws   POST edge.ippanel.com/v1/api/send                  (Authorization header; free text, or a pattern code)
  *   kavenegar    POST api.kavenegar.com/v1/{key}/verify/lookup.json
  *   farazsms     POST api.iranpayamak.com/ws/v1/sms/pattern        (Api-Key header)
  *   ippanel      POST api2.ippanel.com/api/v1/sms/pattern/normal/send (legacy IPPanel API, apikey header)
@@ -391,12 +391,20 @@ class SML_SMS {
 							'Accept'        => 'application/json',
 						),
 						'body'    => wp_json_encode(
-							array(
-								'sending_type' => 'webservice',
-								'from_number'  => self::ippanel_line( $sender ),
-								'message'      => self::render_message( $code, $context ),
-								'params'       => array( 'recipients' => array( '+' . preg_replace( '/\D/', '', $e164 ) ) ),
-							)
+							'' !== $template
+								? array(
+									'sending_type' => 'pattern',
+									'from_number'  => self::ippanel_line( $sender ),
+									'code'         => $template,
+									'recipients'   => array( '+' . preg_replace( '/\D/', '', $e164 ) ),
+									'params'       => array( $var => $code ),
+								)
+								: array(
+									'sending_type' => 'webservice',
+									'from_number'  => self::ippanel_line( $sender ),
+									'message'      => self::render_message( $code, $context ),
+									'params'       => array( 'recipients' => array( '+' . preg_replace( '/\D/', '', $e164 ) ) ),
+								)
 						),
 					)
 				);

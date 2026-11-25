@@ -2,7 +2,7 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Smart Login 1.39.1\n"
+"Project-Id-Version: Smart Login 1.40.0\n"
 "Report-Msgid-Bugs-To: https://www.azarpixel.com\n"
 "POT-Creation-Date: 2026-01-01 00:00+0000\n"
 "MIME-Version: 1.0\n"
@@ -722,7 +722,7 @@ msgid "The line your messages are sent from. For the IPPanel web service use the
 msgstr ""
 
 #: admin/class-sml-admin-page.php:479
-msgid "The text of the sign-up and login code message. Placeholders: {code} (or %code%), {site}, {site_name}, {expiry_minutes}. Plain text only; keep it short and leave out links. The code is a random number of the length set under Verification → Code length (6 by default). If the placeholder is missing the code is added at the end."
+msgid "The text of the sign-up and login code message. Placeholders: {code} (or %code%), {site}, {site_name}, {expiry_minutes}. Plain text only; keep it short and leave out links. The code is a random number of the length set under Verification → Code length (6 by default). If the placeholder is missing the code is added at the end. Not used when a pattern code is set below."
 msgstr ""
 
 #: admin/class-sml-admin-page.php:479
@@ -738,7 +738,7 @@ msgid "Password-reset message text"
 msgstr ""
 
 #: admin/class-sml-admin-page.php:482
-msgid "Kavenegar: the verification template name. FarazSMS and IPPanel (legacy): the pattern code. Melipayamak: the bodyId of the approved template."
+msgid "Kavenegar: the verification template name. IPPanel (web service), FarazSMS and IPPanel (legacy): the pattern code. Melipayamak: the bodyId of the approved template. With the IPPanel web service, a pattern code makes the code go out as a pattern message, which is delivered right away without review; leave it empty to send the message text below instead."
 msgstr ""
 
 #: admin/class-sml-admin-page.php:482
@@ -758,7 +758,7 @@ msgid "Code variable name"
 msgstr ""
 
 #: admin/class-sml-admin-page.php:484
-msgid "FarazSMS and IPPanel (legacy): the variable in your pattern that receives the code, for example code."
+msgid "IPPanel (web service), FarazSMS and IPPanel (legacy): the variable in your pattern that receives the code, for example code."
 msgstr ""
 
 #: admin/class-sml-admin-page.php:485

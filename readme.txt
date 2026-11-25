@@ -4,7 +4,7 @@ Tags: login, registration, email verification, security, woocommerce
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.39.1
+Stable tag: 1.40.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,10 @@ After changing any caching configuration, purge the cache and test in a private/
 4. Place `[smart_login_form]` on any page or post.
 
 == Changelog ==
+
+= 1.40.0 =
+* Added: IPPanel (web service) can now send codes as a pattern message. Enter the pattern code under "Template / pattern code" (and the variable name, default `code`) and the code goes out as a pattern, which IPPanel delivers immediately without review. With the field empty the message text is sent as before.
+* Changed: the license holder is now maziyarnikbakhsh.
 
 = 1.39.1 =
 * Changed: the SMS budget per phone number is now 10 codes per hour (was 3) and can be changed in Settings → SMS gateway → "SMS codes per number per hour".
